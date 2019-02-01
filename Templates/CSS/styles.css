@@ -1,0 +1,54 @@
+/* CSS Document */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,700|Open+Sans+Condensed:700);
+
+html, body {
+	color: white; 
+	font-family: 'Open Sans', sans-serif;
+	font-size: small;
+	background-color: #29506D;
+}
+
+input {
+	background-color: 29506D;
+	border-radius: 25px;
+	text-align: center;
+}
+
+input.form {
+	width: 25%;
+}
+
+header.jumbotron {
+	background-color: #042037;
+	margin: 0;
+}
+div.panel {
+	background-color: #29506D;
+}
+div.panel-footer {
+	background-color: #29506D;
+}
+#about {
+	background-color: #666666;
+}
+#calculator { 
+	
+	}
+#results { 
+	background-color: #29506D;
+	}
+#main {
+	
+}
+#restBasics {
+	background-color: rgba(0,0,0,.20);
+	height: 31em;
+}
+#currentBathroom {
+	background-color: rgba(0,0,0,.20);
+	height: 31em;
+}
+#potentialBathroom {
+	background-color: rgba(0,0,0,.20);
+	height: 31em;
+}
