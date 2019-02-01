@@ -1,0 +1,316 @@
+<doctype html ng-app="myCalculator">
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="css/styles.css">
+<!-- Optional IE8 Support -->
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+	<title>Potty Time: Restroom Water Use Calculator</title>
+</head>
+<body>
+<header class="jumbotron" ng-controller="pottyTimeController as ptCtrl">
+	<div class="row container-fluid">
+	<div class = "col-md-6">
+	<h1>Potty Time! <br/><small>Restroom water use calculator...</small></h1>
+	</div>
+	</div>
+</header>
+<div class="container-fluid" id="calculator">
+<main ng-controller="pottyTimeController as ptCtrl" id="main">
+	<section class="row container-fluid">
+		<p>Are you a restaurant owner thinking your water closet could use an update? You know there's ways to $ave a few bucks but... lightening the load... but you're not sure what to do... well... here's a simple way to guiesimate about how much $ you'll save on your water bill!</p>
+		
+	</section>
+  <section class="row container-fluid" id="main">
+    <div class="col-sm-12 col-md-3" id="restBasics">
+      <form class="form-horizontal">
+        <p>A few basics about your restaurant please...</p>
+        <p>Employees</p>
+        <div ng-repeat="employees in ptCtrl.employees" class="form-group">
+          <label class="col-sm-5 control-label">{{employees.category}}</label>
+          <input class="col-sm-7 form" type="number" min="0" max="100" ng-model="employees.quantity" ng-change="calculate()">
+        </div>
+        <p>Customers</p>
+        <div ng-repeat="customers in ptCtrl.customers" class="form-group">
+          <label class="col-sm-5 control-label">{{customers.category}}</label>
+          <input class="col-sm-7 form" type="number" ng-model="customers.quantity" ng-change="calculate()">
+        </div>
+        <p>Operations</p>
+        <div ng-repeat="days in ptCtrl.days" class="form-group">
+          <label class="col-sm-5 control-label">{{days.operation}}</label>
+          <input class="col-sm-7 form" type="number" max="365" min="0" step="0.0000" ng-model="days.days" ng-change="calculate()">
+        </div>
+        <div ng-repeat="costs in ptCtrl.costs" class="form-group">
+          <label class="col-sm-5 control-label">{{costs.costPerGal}}</label>
+          <input class="col-sm-7 form" type="number" max="365" min="0" step="0.0000" ng-model="costs.price" ng-change="calculate()">
+        </div>
+      </form>
+      <div>
+          <p>Enter cost per gal as integer. Ex. NYC cost per gal @ $0.0045 is entered as '45'.</p>
+      </div>
+    </div>
+
+    <div class="col-sm-12 col-md-3" id="currentBathroom">
+        <p>What's your current bathroom makeup</p>
+        <p>Toilet</p>
+        <form class="form-horizontal">
+          <div ng-repeat="toilet in ptCtrl.toilet" class="form-group">
+            <label class="col-sm-5 control-label">{{toilet.type}}</label>
+            <input class="col-sm-7 form" type="number" ng-model="toilet.quantity" ng-change="calculate()">
+          </div>
+          <p>Urinal</p>
+          <div ng-repeat="urinal in ptCtrl.urinal" class="form-group">
+            <label class="col-sm-5 control-label">{{urinal.type}}</label>
+            <input class="col-sm-7 form" type="number" ng-model="urinal.quantity" ng-change="calculate()">
+          </div>
+        </form>
+      </div>
+
+    <div class="col-sm-12 col-md-3" id="potentialBathroom">
+      <p>What's your current bathroom makeup</p>
+      <p>Toilet</p>
+      <form class="form-horizontal">
+        <div ng-repeat="newToilet in ptCtrl.newToilet" class="form-group">
+        <label class="col-sm-5 control-label">{{newToilet.type}}</label>
+        <input class="col-sm-7 form" type="number" ng-model="newToilet.quantity" ng-change="calculate()">
+        </div>
+        <p>Urinal</p>
+        <div ng-repeat="newUrinal in ptCtrl.newUrinal" class="form-group">
+          <label class="col-sm-5 control-label">{{newUrinal.type}}</label>
+          <input class="col-sm-7 form" type="number" ng-model="newUrinal.quantity" ng-change="calculate()">
+        </div>
+      </form>
+    </div>
+
+    <div class="col-sm-12 col-md-3 panel">
+    <div class = "panel-heading">
+      <div class = "table-responsive">
+        <table class = "table">
+          <tr><th colspan = "2">Money Saved</th></tr>
+          <tr><td>Toilet</td><td>{{tsavings | currency:"$ ":0}}</td></tr>
+          <tr><td>Urinal</td><td>{{urinalSavingsCosts | currency:"$ ":0}}</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="table-responsive">
+        <table class = "table">
+          <tr><td colspan = "2">Water Conserved</td></tr>
+          <tr>
+            <td>Toilet</td>
+            
+            <td>{{toiletSavingsWater | number}}</td></tr>
+          <tr>
+            <td>Urinal</td>
+          <td>{{urinalSavingsWater | number}}</td></tr>
+        </table>
+      </div>
+    </div>
+    </div>
+  </section>
+</main>
+</div>
+<div class="row"></div>
+<div class="row container-fluid" id="about">
+<section class="container-fluid">
+	<h4>About</h4>
+	<p>Restroom use estimates are calculated based on <a href="http://www.usgbc.org/node/2600210?return=/credits/healthcare/v4/water-efficiency">USGBC LEED Water Efficiency</a> prerequisites. Use estimates are applicable for schools, healthcare facilities, and retail establishments. <a href="http://www3.epa.gov/watersense/products/toilets.html">Toilet</a> and <a href="http://www3.epa.gov/watersense/products/urinals.html">urinal</a> flush rates are based on <a href="">EPA WaterSense</a> types and specificaions. Industry trends and considerations are aggregated throguh <a href="http://www.map-testing.com/toilet-types/">MaP</a> and <a href="http://www.allianceforwaterefficiency.org/commercial_restroom_audit.aspx">Alliance for Water Efficiency</a> reporting.</p>
+  <p>For more questions or comments you can reach me, SeeMore Roses, via <a href="mailto:SeeMoreRoses@restaurantpotty1.com?Subject=Hello" target="_top">email</a>.</p>
+</section>
+</div>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+<script type="text/javascript">
+	(function() {
+  
+  var app = angular.module('myCalculator', []);
+  app.controller('pottyTimeController', ['$scope', function($scope){
+
+    //alert('working!');
+    var days = [
+                {operation : 'Days Open',
+                days : 365}
+              ]
+    var costs = [
+              {costPerGal: 'Cost per gal',
+                price: 45
+              }
+              ]
+    var employees = [
+                      {
+                        category : 'male',
+                        quantity : 10,
+                        userate : 1,
+                        urinalUse: 2
+                      },
+                      {
+                        category : 'female',
+                        quantity : 10,
+                        userate : 3,
+                        urinalUse : 0
+                      }
+                    ]
+    var customers = [
+                      {
+                        category : 'male',
+                        quantity : 100,
+                        userate : 0.1,
+                        urinalUse : 0.4
+                      },
+                      {
+                        category : 'female',
+                        quantity : 100,
+                        userate : 0.5,
+                        urinalUse : 0
+                      }
+                    ]
+    var toilet = [
+                      {
+                        type : 'Conventional',
+                        quantity : 0,
+                        gpf : 1.6
+                      },
+                      {
+                        type : 'High-Efficiency: Single-Flush',
+                        quantity : 0,
+                        gpf : 1.28
+                      },
+                      {
+                        type : 'High-Efficiency: Dual-Flush',
+                        quantity : 0,
+                        gpf : 1.28
+                      }
+
+                    ]
+    var urinal = [
+                      {
+                        type : 'conventional',
+                        quantity : 0,
+                        gpf : 1
+                      },
+                      {
+                        type : 'High-Efficiency',
+                        quantity : 0,
+                        gpf : 0.5
+                      },
+                      {
+                        type : 'Waterless',
+                        quantity : 0,
+                        gpf : 0
+                      }
+
+                    ]
+    var newToilet = [
+                      {
+                        type : 'Conventional',
+                        quantity : 0,
+                        gpf : 1.6
+                      },
+                      {
+                        type : 'High-Efficiency: Single-Flush',
+                        quantity : 0,
+                        gpf : 1.28
+                      },
+                      {
+                        type : 'High-Efficiency: Dual-Flush',
+                        quantity : 0,
+                        gpf : 1.28
+                      }
+
+                    ]
+    var newUrinal = [
+                      {
+                        type : 'conventional',
+                        quantity : 0,
+                        gpf : 1
+                      },
+                      {
+                        type : 'High-Efficiency',
+                        quantity : 0,
+                        gpf : 0.5
+                      },
+                      {
+                        type : 'Waterless',
+                        quantity : 0,
+                        gpf : 0
+                      }
+
+                    ]
+
+
+    this.days = days;
+    this.costs = costs;
+    this.employees = employees;
+    this.customers = customers;
+    this.toilet = toilet;
+    this.urinal = urinal;
+    this.newToilet = newToilet;
+    this.newUrinal = newUrinal;
+    
+
+    $scope.calculate = function() {
+      //alert('calculating');
+      //all the urinal shit here
+      totalUVisits = (employees[0].quantity * employees[0].urinalUse) + (customers[0].quantity * customers[0].urinalUse);
+      totalUrinals = urinal[0].quantity + urinal[1].quantity + urinal[2].quantity;
+        urinalwaterC = (totalUVisits * (urinal[0].quantity / totalUrinals))* urinal[0].gpf * days[0].days;
+        urinalwaterF = (totalUVisits * (urinal[1].quantity / totalUrinals)) * urinal[1].gpf * days[0].days;
+        urinalwaterW = (totalUVisits * (urinal[2].quantity / totalUrinals)) * urinal[2].gpf * days[0].days;
+        urinalWaterTotal = urinalwaterC + urinalwaterF + urinalwaterW;
+        //new urinal shit here
+        newtotalUrinals = newUrinal[0].quantity + newUrinal[1].quantity + newUrinal[2].quantity;
+        newurinalwaterC = (totalUVisits * (newUrinal[0].quantity / totalUrinals))* newUrinal[0].gpf * days[0].days;
+        newurinalwaterF = (totalUVisits * (newUrinal[1].quantity / totalUrinals)) * newUrinal[1].gpf * days[0].days;
+        newurinalwaterW = (totalUVisits * (newUrinal[2].quantity / totalUrinals)) * newUrinal[2].gpf * days[0].days;
+        newUrinalWaterTotal = newurinalwaterC + newurinalwaterF + newurinalwaterW;
+        //savings table data for urinals here
+        urinalSavingsWater = urinalWaterTotal - newUrinalWaterTotal;
+        urinalSavingsCosts = urinalSavingsWater * (costs[0].price/10000);
+
+      //average bathroom visits per day
+      totalTVisits = (employees[0].quantity * employees[0].userate) + (employees[1].quantity * employees[1].userate) + (customers[0].quantity * customers[0].userate) + (customers[1].quantity * customers[1].userate);
+
+      totalTVisitsDF = 
+        (((employees[0].quantity * (employees[0].userate/2)) * toilet[2].gpf ) + ((employees[0].quantity * employees[0].userate) * 0.8 ) + ((employees[1].quantity * (employees[1].userate /2)) * toilet[2].gpf ) + ((employees[1].quantity * (employees[1].userate)) * 0.8 ) + ((customers[0].quantity * (customers[0].userate /2)) * toilet[2].gpf) + ((customers[0].quantity * (customers[0].userate)) * 0.8) + ((customers[1].quantity * (customers[1].userate /2)) * toilet[2].gpf ) + ((customers[1].quantity * (customers[1].userate)) * 0.8 ))/totalTVisits;
+      //toilet ratios needed to divide among bathroom visits
+      toiletTotal = (toilet[0].quantity + toilet[1].quantity + toilet[2].quantity);
+     //amount of gallons per year used on each toilet
+      waterTC = (totalTVisits * (toilet[0].quantity / toiletTotal)) * toilet[0].gpf * days[0].days;
+      waterHESF = (totalTVisits * (toilet[1].quantity / toiletTotal)) * toilet[1].gpf * days[0].days;
+      waterHEDF = totalTVisitsDF * days[0].days;
+      totalWater = waterTC + waterHESF + waterHEDF;
+
+      newtoiletTotal = (newToilet[0].quantity + newToilet[1].quantity + newToilet[2].quantity);
+      //new water use amounts
+      newwaterTC = (totalTVisits *  ((newToilet[0].quantity / newtoiletTotal))) * newToilet[0].gpf * days[0].days;
+      newwaterHESF = (totalTVisits * ((newToilet[1].quantity / newtoiletTotal))) * newToilet[1].gpf * days[0].days;
+      newwaterHEDF = totalTVisitsDF * days[0].days;
+      newtotalWater = newwaterTC + newwaterHESF + newwaterHEDF;
+
+      toiletSavingsWater = totalWater - newtotalWater;
+      tsavings = toiletSavingsWater * (costs[0].price/10000);
+      //Report metrics to site 
+      $scope.urinalSavingsCosts = (urinalSavingsCosts).toFixed(0);
+      $scope.tsavings = (tsavings).toFixed(0);
+      $scope.toiletSavingsWater = (toiletSavingsWater).toFixed(0);
+      $scope.urinalSavingsWater = (urinalSavingsWater).toFixed(0);
+      
+    }
+    $scope.calculate();
+
+  }]);
+
+
+
+})();
+</script>
+</body>
+</html>
